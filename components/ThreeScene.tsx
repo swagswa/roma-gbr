@@ -41,19 +41,21 @@ const IPhone17Pro = () => {
           />
         </RoundedBox>
 
-        {/* Logo on Screen - Maximum visibility settings */}
-        <mesh position={[0, 0, 0.25]} renderOrder={100}>
-          <planeGeometry args={[2.5, 2.5]} />
-          <meshStandardMaterial 
+        {/* Logo on Screen - Debugging visibility with different geometry and higher Z */}
+        <mesh position={[0, 0, 0.4]} renderOrder={1000}>
+          <planeGeometry args={[2, 2]} />
+          <meshBasicMaterial 
             map={texture} 
-            transparent={false}
-            roughness={0}
-            metalness={0}
-            emissive="#ffffff"
-            emissiveIntensity={0.5}
-            toneMapped={false} 
+            transparent={true}
             side={THREE.DoubleSide}
+            toneMapped={false}
           />
+        </mesh>
+        
+        {/* Secondary check - tiny glowing sphere to confirm location */}
+        <mesh position={[0, 0, 0.45]}>
+          <sphereGeometry args={[0.05, 16, 16]} />
+          <meshBasicMaterial color="#00ff00" />
         </mesh>
 
         {/* Dynamic Island */}
