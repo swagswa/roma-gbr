@@ -3,10 +3,11 @@ import React, { useRef, Suspense } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Float, MeshDistortMaterial, PerspectiveCamera, RoundedBox, Environment, ContactShadows, useTexture } from '@react-three/drei';
 import * as THREE from 'three';
+import logoImg from '../public/logo.jpg';
 
 const IPhone17Pro = () => {
   const groupRef = useRef<THREE.Group>(null);
-  const texture = useTexture('/logo.jpg');
+  const texture = useTexture(logoImg);
   
   useFrame((state) => {
     if (!groupRef.current) return;
@@ -41,9 +42,9 @@ const IPhone17Pro = () => {
           />
         </RoundedBox>
 
-        {/* Logo on Screen - Debugging visibility with different geometry and higher Z */}
-        <mesh position={[0, 0, 0.4]} renderOrder={1000}>
-          <planeGeometry args={[2, 2]} />
+        {/* Logo on Screen - Positioned clearly in front */}
+        <mesh position={[0, 0, 0.25]} renderOrder={100}>
+          <planeGeometry args={[2.2, 2.2]} />
           <meshBasicMaterial 
             map={texture} 
             transparent={true}
@@ -52,12 +53,6 @@ const IPhone17Pro = () => {
           />
         </mesh>
         
-        {/* Secondary check - tiny glowing sphere to confirm location */}
-        <mesh position={[0, 0, 0.45]}>
-          <sphereGeometry args={[0.05, 16, 16]} />
-          <meshBasicMaterial color="#00ff00" />
-        </mesh>
-
         {/* Dynamic Island */}
         <RoundedBox args={[0.6, 0.12, 0.01]} radius={0.06} position={[0, 2.8, 0.2]}>
           <meshBasicMaterial color="#000" />
