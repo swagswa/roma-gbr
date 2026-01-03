@@ -1,11 +1,12 @@
 
-import React, { useRef } from 'react';
+import React, { useRef, Suspense } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Float, MeshDistortMaterial, PerspectiveCamera, RoundedBox, Environment, ContactShadows } from '@react-three/drei';
+import { Float, MeshDistortMaterial, PerspectiveCamera, RoundedBox, Environment, ContactShadows, useTexture } from '@react-three/drei';
 import * as THREE from 'three';
 
 const IPhone17Pro = () => {
   const groupRef = useRef<THREE.Group>(null);
+  const texture = useTexture('/logo.jpg');
   
   useFrame((state) => {
     if (!groupRef.current) return;
@@ -17,7 +18,7 @@ const IPhone17Pro = () => {
   });
 
   return (
-    <group ref={groupRef} scale={1.1}>
+    <group ref={groupRef} scale={0.8}>
       {/* Titanium Frame */}
       <RoundedBox args={[3.2, 6.4, 0.35]} radius={0.4} smoothness={10}>
         <meshPhysicalMaterial 
@@ -39,6 +40,12 @@ const IPhone17Pro = () => {
           emissiveIntensity={0.2}
         />
       </RoundedBox>
+
+      {/* Logo on Screen */}
+      <mesh position={[0, 0, 0.21]}>
+        <planeGeometry args={[2.5, 2.5]} />
+        <meshBasicMaterial map={texture} transparent={true} />
+      </mesh>
 
       {/* Dynamic Island 17 Concept */}
       <RoundedBox args={[0.6, 0.12, 0.01]} radius={0.06} position={[0, 2.8, 0.2]}>
@@ -89,26 +96,18 @@ export const Hero3D = () => {
   return (
     <div className="absolute inset-0 z-0 pointer-events-none">
       <Canvas dpr={[1, 2]} gl={{ alpha: true }}>
-        <PerspectiveCamera makeDefault position={[0, 0, 10]} fov={35} />
-        
-        {/* Cinematic High-End Lighting */}
-        <ambientLight intensity={0.4} />
-        <spotLight position={[10, 15, 10]} angle={0.25} penumbra={1} intensity={1.5} color="#ffffff" castShadow />
-        <pointLight position={[-10, -5, 5]} intensity={2.5} color="#3b82f6" />
-        <pointLight position={[10, 5, 5]} intensity={1.5} color="#8b5cf6" />
-        
-        {/* Centered Phone Group */}
-        <IPhone17Pro />
-        
-        <ContactShadows 
-          position={[0, -4, 0]} 
-          opacity={0.35} 
-          scale={15} 
-          blur={3} 
-          far={5} 
-        />
-        
-        <Environment preset="night" />
+        <Suspense fallback={null}>
+          <PerspectiveCamera makeDefault position={[0, 0, 10]} fov={35} />
+          
+          {/* Cinematic High-End Lighting */}
+          <ambientLight intensity={0.4} />
+          <spotLight position={[10, 15, 10]} angle={0.25} penumbra={1} intensity={1.5} color="#ffffff" castShadow />
+          <pointLight position={[-10, -5, 5]} intensity={2.5} color="#3b82f6" />
+          <pointLight position={[10, 5, 5]} intensity={1.5} color="#8b5cf6" />
+          
+          {/* Centered Phone Group */}
+          <IPhone17Pro />
+        </Suspense>
       </Canvas>
     </div>
   );
