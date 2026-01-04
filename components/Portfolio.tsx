@@ -75,7 +75,7 @@ export const Portfolio = () => {
           {/* Scrollable Container */}
           <div 
             ref={scrollContainerRef}
-            className="flex gap-6 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-12 px-4"
+            className="flex gap-6 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-12 pt-12 px-4 -mt-12"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
             <AnimatePresence mode="wait">
