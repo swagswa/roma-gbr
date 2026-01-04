@@ -6,9 +6,10 @@ export interface CaseStudy {
   id: string;
   title: string;
   category: string;
-  views: string;
   gradientClass: string;
   label: string;
+  type: 'vertical' | 'horizontal';
+  duration: string;
 }
 
 export interface Metric {
