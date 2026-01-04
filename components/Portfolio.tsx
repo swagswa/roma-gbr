@@ -49,6 +49,84 @@ const VideoPlayer = ({ url, onClose }: { url: string, onClose: () => void }) => 
   );
 };
 
+const VideoCard = ({ item, onClick }: { item: CaseStudy, onClick: () => void }) => {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+    videoRef.current?.play().catch(() => {});
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    if (videoRef.current) {
+      videoRef.current.pause();
+      videoRef.current.currentTime = 0;
+    }
+  };
+
+  return (
+    <motion.div
+      layout
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -20 }}
+      whileHover={{ y: -10 }}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      onClick={onClick}
+      className={`relative flex-shrink-0 snap-center rounded-[2rem] overflow-hidden group cursor-pointer border border-white/5 ${
+        item.type === 'vertical' ? 'w-[280px] aspect-[9/16]' : 'w-[400px] md:w-[600px] aspect-[16/9]'
+      } ${item.gradientClass}`}
+    >
+      {/* Background Glow */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60 z-10" />
+      <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity z-0" />
+      
+      {/* Video Preview */}
+      <div className="absolute inset-0 overflow-hidden">
+        <video 
+          ref={videoRef}
+          src={item.videoUrl}
+          muted
+          loop
+          playsInline
+          className={`w-full h-full object-cover transition-transform duration-700 ${isHovered ? 'scale-110' : 'scale-100'}`}
+          poster={`${item.videoUrl}#t=0.1`} // Simple way to show first frame
+        />
+      </div>
+
+      {/* Play Icon Overlay (Only visible when not hovered) */}
+      <div className={`absolute inset-0 flex items-center justify-center z-20 transition-opacity duration-300 ${isHovered ? 'opacity-0' : 'opacity-100'}`}>
+         <div className="w-16 h-16 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/10 group-hover:scale-110 transition-transform">
+           <svg className="w-6 h-6 ml-1 text-white" fill="currentColor" viewBox="0 0 24 24">
+             <path d="M8 5v14l11-7z" />
+           </svg>
+         </div>
+      </div>
+
+      {/* Content */}
+      <div className="absolute inset-x-0 bottom-0 p-8 z-20 space-y-3">
+        <div className="flex flex-col gap-1">
+           <span className="text-blue-400 text-[9px] font-bold tracking-widest uppercase">{item.category}</span>
+           <h4 className="text-2xl font-[900] italic tracking-tight">{item.title}</h4>
+        </div>
+        
+        <div className="flex items-center justify-between pt-4">
+           <div className="flex items-center gap-2 text-white/50 text-[10px] font-bold">
+             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+             {item.duration}
+           </div>
+           <div className="px-2 py-1 rounded bg-white/10 backdrop-blur-md text-[9px] font-bold text-white/80 border border-white/10">
+             {item.label}
+           </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
 export const Portfolio = () => {
   const [activeTab, setActiveTab] = useState<'vertical' | 'horizontal'>('vertical');
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
@@ -114,50 +192,11 @@ export const Portfolio = () => {
           >
             <AnimatePresence mode="wait">
               {filteredCases.map((item, idx) => (
-                <motion.div
-                  key={item.id}
-                  layout
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  transition={{ delay: idx * 0.05 }}
-                  whileHover={{ y: -10 }}
-                  onClick={() => setSelectedVideo(item.videoUrl)}
-                  className={`relative flex-shrink-0 snap-center rounded-[2rem] overflow-hidden group cursor-pointer border border-white/5 ${
-                    item.type === 'vertical' ? 'w-[280px] aspect-[9/16]' : 'w-[400px] md:w-[600px] aspect-[16/9]'
-                  } ${item.gradientClass}`}
-                >
-                  {/* Background Glow */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60 z-10" />
-                  <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity z-0" />
-                  
-                  {/* Media Placeholder */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                     <div className="w-16 h-16 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/10 group-hover:scale-110 transition-transform">
-                       <svg className="w-6 h-6 ml-1 text-white" fill="currentColor" viewBox="0 0 24 24">
-                         <path d="M8 5v14l11-7z" />
-                       </svg>
-                     </div>
-                  </div>
-
-                  {/* Content */}
-                  <div className="absolute inset-x-0 bottom-0 p-8 z-20 space-y-3">
-                    <div className="flex flex-col gap-1">
-                       <span className="text-blue-400 text-[9px] font-bold tracking-widest uppercase">{item.category}</span>
-                       <h4 className="text-2xl font-[900] italic tracking-tight">{item.title}</h4>
-                    </div>
-                    
-                    <div className="flex items-center justify-between pt-4">
-                       <div className="flex items-center gap-2 text-white/50 text-[10px] font-bold">
-                         <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                         {item.duration}
-                       </div>
-                       <div className="px-2 py-1 rounded bg-white/10 backdrop-blur-md text-[9px] font-bold text-white/80 border border-white/10">
-                         {item.label}
-                       </div>
-                    </div>
-                  </div>
-                </motion.div>
+                <VideoCard 
+                  key={item.id} 
+                  item={item} 
+                  onClick={() => setSelectedVideo(item.videoUrl)} 
+                />
               ))}
             </AnimatePresence>
           </div>
