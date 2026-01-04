@@ -4,20 +4,54 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { CaseStudy } from '../types';
 
 const CASES: CaseStudy[] = [
-  // Vertical Videos
-  { id: 'v1', title: 'THE TECH HOOK', category: 'Tech Review', duration: '0:15', gradientClass: 'card-gradient-1', label: 'Viral Match', type: 'vertical' },
-  { id: 'v2', title: 'NEON LIFESTYLE', category: 'Commercial', duration: '0:20', gradientClass: 'card-gradient-2', label: 'Viral Match', type: 'vertical' },
-  { id: 'v3', title: 'AI TRANSFORMATION', category: 'Educational', duration: '0:30', gradientClass: 'card-gradient-3', label: 'High Retention', type: 'vertical' },
-  { id: 'v4', title: 'EXTREME RETENTION', category: 'Entertainment', duration: '0:12', gradientClass: 'card-gradient-1', label: 'Viral Match', type: 'vertical' },
-  { id: 'v5', title: 'CYBERPUNK EDIT', category: 'Creative', duration: '0:18', gradientClass: 'card-gradient-2', label: 'New Style', type: 'vertical' },
+  { id: 'v1', title: 'THE TECH HOOK', category: 'Tech Review', duration: '0:15', gradientClass: 'card-gradient-1', label: 'Viral Match', type: 'vertical', videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' },
+  { id: 'v2', title: 'NEON LIFESTYLE', category: 'Commercial', duration: '0:20', gradientClass: 'card-gradient-2', label: 'Viral Match', type: 'vertical', videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4' },
+  { id: 'v3', title: 'AI TRANSFORMATION', category: 'Educational', duration: '0:30', gradientClass: 'card-gradient-3', label: 'High Retention', type: 'vertical', videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4' },
+  { id: 'v4', title: 'EXTREME RETENTION', category: 'Entertainment', duration: '0:12', gradientClass: 'card-gradient-1', label: 'Viral Match', type: 'vertical', videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4' },
+  { id: 'v5', title: 'CYBERPUNK EDIT', category: 'Creative', duration: '0:18', gradientClass: 'card-gradient-2', label: 'New Style', type: 'vertical', videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4' },
   // Horizontal Videos
-  { id: 'h1', title: 'FUTURE CITY', category: 'Cinematic', duration: '1:45', gradientClass: 'card-gradient-3', label: 'Masterpiece', type: 'horizontal' },
-  { id: 'h2', title: 'BRAND STORY', category: 'Corporate', duration: '2:30', gradientClass: 'card-gradient-1', label: 'High Quality', type: 'horizontal' },
-  { id: 'h3', title: 'PRODUCT LAUNCH', category: 'Marketing', duration: '1:15', gradientClass: 'card-gradient-2', label: 'Top Tier', type: 'horizontal' },
+  { id: 'h1', title: 'FUTURE CITY', category: 'Cinematic', duration: '1:45', gradientClass: 'card-gradient-3', label: 'Masterpiece', type: 'horizontal', videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4' },
+  { id: 'h2', title: 'BRAND STORY', category: 'Corporate', duration: '2:30', gradientClass: 'card-gradient-1', label: 'High Quality', type: 'horizontal', videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4' },
+  { id: 'h3', title: 'PRODUCT LAUNCH', category: 'Marketing', duration: '1:15', gradientClass: 'card-gradient-2', label: 'Top Tier', type: 'horizontal', videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4' },
 ];
+
+const VideoPlayer = ({ url, onClose }: { url: string, onClose: () => void }) => {
+  return (
+    <motion.div 
+      initial={{ opacity: 0 }} 
+      animate={{ opacity: 1 }} 
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-2xl p-4 md:p-10"
+      onClick={onClose}
+    >
+      <motion.div 
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.9, opacity: 0 }}
+        className="relative w-full max-w-6xl aspect-video bg-black rounded-3xl overflow-hidden shadow-2xl border border-white/10"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button 
+          onClick={onClose}
+          className="absolute top-6 right-6 z-10 w-12 h-12 rounded-full bg-black/50 backdrop-blur-md border border-white/10 flex items-center justify-center text-white hover:bg-white hover:text-black transition-all"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+        </button>
+        <video 
+          src={url} 
+          className="w-full h-full object-contain"
+          controls
+          autoPlay
+          playsInline
+        />
+      </motion.div>
+    </motion.div>
+  );
+};
 
 export const Portfolio = () => {
   const [activeTab, setActiveTab] = useState<'vertical' | 'horizontal'>('vertical');
+  const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const filteredCases = CASES.filter(item => item.type === activeTab);
@@ -88,6 +122,7 @@ export const Portfolio = () => {
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ delay: idx * 0.05 }}
                   whileHover={{ y: -10 }}
+                  onClick={() => setSelectedVideo(item.videoUrl)}
                   className={`relative flex-shrink-0 snap-center rounded-[2rem] overflow-hidden group cursor-pointer border border-white/5 ${
                     item.type === 'vertical' ? 'w-[280px] aspect-[9/16]' : 'w-[400px] md:w-[600px] aspect-[16/9]'
                   } ${item.gradientClass}`}
@@ -128,6 +163,15 @@ export const Portfolio = () => {
           </div>
         </div>
       </div>
+      
+      <AnimatePresence>
+        {selectedVideo && (
+          <VideoPlayer 
+            url={selectedVideo} 
+            onClose={() => setSelectedVideo(null)} 
+          />
+        )}
+      </AnimatePresence>
     </section>
   );
 };

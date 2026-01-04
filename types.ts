@@ -10,6 +10,7 @@ export interface CaseStudy {
   label: string;
   type: 'vertical' | 'horizontal';
   duration: string;
+  videoUrl: string;
 }
 
 export interface Metric {
