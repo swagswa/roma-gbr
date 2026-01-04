@@ -11,6 +11,20 @@ export interface CaseStudy {
   type: 'vertical' | 'horizontal';
   duration: string;
   videoUrl: string;
+  order: number;
+}
+
+export interface SocialLink {
+  id: string;
+  platform: string;
+  displayName: string;
+  url: string;
+  icon: 'instagram' | 'telegram' | 'facebook' | 'x' | 'youtube' | 'link';
+}
+
+export interface ContactSettings {
+  email: string;
+  socialLinks: SocialLink[];
 }
 
 export interface Metric {
@@ -26,17 +40,7 @@ export interface Mechanic {
   color: string;
 }
 
-declare module '*.jpg' {
-  const content: string;
-  export default content;
-}
-
-declare module '*.png' {
-  const content: string;
-  export default content;
-}
-
-declare module '*.svg' {
-  const content: string;
-  export default content;
-}
+declare module '*.jpg';
+declare module '*.png';
+declare module '*.svg';
+declare module '*.mp4';

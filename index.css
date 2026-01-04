@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    @apply bg-black text-white antialiased;
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+@layer utilities {
+  .text-glow {
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+  }
+  
+  .card-gradient-1 { 
+    background: linear-gradient(180deg, #1A1A2E 0%, #000000 100%); 
+  }
+  
+  .card-gradient-2 { 
+    background: linear-gradient(180deg, #2D1B33 0%, #000000 100%); 
+  }
+  
+  .card-gradient-3 { 
+    background: linear-gradient(180deg, #1B2D21 0%, #000000 100%); 
+  }
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: #050507;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+canvas { 
+  touch-action: none; 
+}

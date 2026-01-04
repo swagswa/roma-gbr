@@ -1,8 +1,26 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { getSettings } from '../services/settingsPersistence';
+import { ContactSettings } from '../types';
 
 export const Footer = () => {
+  const [settings, setSettings] = useState<ContactSettings | null>(null);
+
+  useEffect(() => {
+    const loadSettings = async () => {
+      const s = await getSettings();
+      setSettings(s);
+    };
+    loadSettings();
+
+    const handleUpdate = (e: any) => {
+      setSettings(e.detail);
+    };
+    window.addEventListener('settings-updated', handleUpdate);
+    return () => window.removeEventListener('settings-updated', handleUpdate);
+  }, []);
+
   return (
     <footer id="connect" className="relative pt-48 pb-24 bg-black overflow-hidden">
       {/* Background Glows */}
@@ -47,10 +65,25 @@ export const Footer = () => {
         </motion.div>
 
         <div className="mt-48 pt-12 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-8 text-[10px] font-bold text-white/30 uppercase tracking-[0.3em]">
-          <p>© 2025 ROMANGBR STUDIOS</p>
-          <div className="flex gap-12">
-            <a href="#" className="hover:text-white transition-colors">IG: @ROMANGBR</a>
-            <a href="#" className="hover:text-white transition-colors">YT: @ROMANGBR_EDITS</a>
+          <p>© {new Date().getFullYear()} ROMANGBR STUDIOS</p>
+          <div className="flex flex-wrap justify-center gap-6 md:gap-12">
+            {settings?.socialLinks?.map((social) => (
+              <a 
+                key={social.id}
+                href={social.url} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="hover:text-white transition-colors"
+              >
+                {(social.platform || '').toUpperCase()}: {(social.displayName || '').toUpperCase()}
+              </a>
+            ))}
+            {(!settings?.socialLinks || settings.socialLinks.length === 0) && (
+              <>
+                <a href="#" className="hover:text-white transition-colors">IG: @ROMANGBR</a>
+                <a href="#" className="hover:text-white transition-colors">YT: @ROMANGBR_EDITS</a>
+              </>
+            )}
           </div>
         </div>
       </div>
